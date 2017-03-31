@@ -1,0 +1,254 @@
+<html>
+
+<head>
+  <title>Kolumnoj: a column browser</title>
+</head>
+
+<style>
+
+body {
+  font-family: sans-serif;
+  font-weight: lighter;
+  background-color: black;
+}
+
+h1, h2, h3 {
+  font-weight: lighter;
+}
+
+#container {
+  background-color: white;
+  width: 60%;
+  margin: auto;
+  padding: 5%;
+}
+
+#kolumnoj-table {
+  width: 100%;
+  margin-top: 3em;
+  border: black solid thin;
+  border-radius: 10px;
+  font-weight: lighter;
+}
+
+#kolumnoj-left {
+  border-right: black solid thin;
+}
+
+#kolumnoj-left, #kolumnoj-right {
+  width: 50%;
+}
+
+.valign {
+  vertical-align: top;
+}
+
+.kolumnoj-column {
+  width: 100%;
+  border: none;
+/*  height: 14em; /* maximum height of columns */
+/*  overflow-y: scroll; /* allows columns to scroll if height exceeded */
+}
+
+.kolumnoj-list {
+    list-style: none;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.kolumnoj-list li {
+  padding-left: 1.5em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  margin-left: -2em;
+  margin-right: 1.5em;
+  text-indent: -1em;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.kolumnoj-list li:hover {
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
+
+#kolumnoj-right-div {
+    display: none;
+}
+
+#kolumnoj-placeholder-div {
+  text-align: center;
+}
+
+#kolumnoj-placeholder{
+  color: grey;
+  font-size: large;
+}
+
+.selected {
+  background-color: black;
+  color: white;
+}
+
+#kolumnoj-output {
+  display: block;
+  height: 1em;
+  margin-top: 3em;
+}
+
+</style>
+
+<body>
+
+<div id="container">
+
+<h2>Kolumnoj</h2>
+<h3>A column browser</h3>
+
+<table id="kolumnoj-table">
+  <tr>
+    <td id="kolumnoj-left">
+      <div id="kolumnoj-left-div" class="kolumnoj-column"></div>
+    </td>
+    <td id="kolumnoj-right">
+      <div id="kolumnoj-right-div" class="kolumnoj-column"></div>
+      <div id="kolumnoj-placeholder-div">
+        <span id="kolumnoj-placeholder">Select an option<br>from the left column.</span>
+      </div>
+    </td>
+</table>
+
+<span id="kolumnoj-output"></span>
+
+</div>
+
+</body>
+
+<script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+
+<script>
+
+columns = [
+  {
+    "lColumn": "Fermentum",
+    "rColumn": [
+      "Porta",
+      "Fusce",
+      "Vestibulum",
+      "Vulputate",
+      "Bibendum"
+    ],
+  },
+  {
+    "lColumn": "Vulputate",
+    "rColumn": [
+      "Commodo",
+      "Condimentum",
+      "Porta",
+      "Vehicula",
+      "Mattis"
+    ],
+  },
+  {
+    "lColumn": "Vestibulum",
+    "rColumn": [
+      "Fringilla",
+      "Porta",
+      "Dolor",
+      "Aenean",
+      "Ridiculus"
+    ]
+  },
+  {
+    "lColumn": "Adipiscing",
+    "rColumn": [
+      "Quam",
+      "Risus",
+      "Tristique",
+      "Parturient",
+      "Elit"
+    ]
+  },
+  {
+    "lColumn": "Purus",
+    "rColumn": [
+      "Ligula",
+      "Magna",
+      "Fringilla",
+      "Tortor",
+      "Risus"
+    ]
+  },
+  {
+    "lColumn": "Tristique",
+    "rColumn": [
+      "Egestas",
+      "Aenean",
+      "Cursus",
+      "Sit",
+      "Magna"
+    ]
+  },
+  {
+    "lColumn": "Fusce",
+    "rColumn": [
+      "Cras",
+      "Pharetra",
+      "Purus",
+      "Amet",
+      "Fringilla"
+    ]
+  },
+  {
+    "lColumn": "Magna",
+    "rColumn": [
+      "Fermentum",
+      "Justo",
+      "Pellentesque",
+      "Etiam",
+      "Pharetra"
+    ]
+  }
+]
+
+var listLeft = '<ul class="kolumnoj-list" id="kolumnoj-list-left">';
+
+for (a = 0; a < columns.length; a++) {
+  listLeft += "<li>" + columns[a].lColumn + "</li>"
+}
+
+listLeft += "</ul>"
+
+document.getElementById("kolumnoj-left-div").innerHTML = listLeft;
+
+$(window).load(function() {
+  $("#kolumnoj-list-left").children("li").click(function() {
+    $("#kolumnoj-list-left").children("li").removeClass("selected");
+    $(this).addClass("selected");
+    var selectLeft = $("#kolumnoj-list-left").children(".selected").index();
+    var listRight = '<ul class="kolumnoj-list" id="kolumnoj-list-right">';
+    for (a = 0; a < columns[selectLeft].rColumn.length; a++) {
+      listRight += "<li>" + columns[selectLeft].rColumn[a] + "</li>";
+    }
+    listRight += "</ul>";
+    document.getElementById("kolumnoj-right-div").innerHTML = listRight;
+    $("#kolumnoj-placeholder-div").hide();
+    $("#kolumnoj-right").addClass("valign");
+    $("#kolumnoj-right-div").show();
+    $("#kolumnoj-right-div").on("click", "li", function() {
+      $("#kolumnoj-right-div").contents().find("li.selected").removeClass("selected");
+      $(this).toggleClass("selected");
+      var selectRight = $("#kolumnoj-list-right").children(".selected").index();
+      // Do stuff //
+      document.getElementById("kolumnoj-output").innerHTML = columns[selectLeft].lColumn + ", " + columns[selectLeft].rColumn[selectRight];
+    });
+  });
+});
+
+</script>
+
+</html>
